@@ -13,6 +13,15 @@ public class InnerProcessUnknownClassHandler extends InnerProcessHandler {
         super(supply);
     }
 
+    private Class<?> classForName(String clsName) {
+        try {
+            return Class.forName(clsName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     protected Object sendCall(Class<?> methodDeclaredClass, Method method, Object[] args) {
         //1. 本进程，而且interfaceClass也是直接服务端的key。
@@ -40,8 +49,26 @@ public class InnerProcessUnknownClassHandler extends InnerProcessHandler {
         if (object != null) {
             try {
                 //将接口转变为服务器的接口
-                Method svrMethod = object.getClass().getMethod(method.getName(), method.getParameterTypes());
-                Object result = svrMethod.invoke(object, args);
+                //将参数类型和参数对象，逐一转变为服务端类型和对象
+                Class<?>[] paramTypes = method.getParameterTypes();
+                Class<?>[] svrParamTypes = new Class[paramTypes.length];
+                Object[] svrArgs = new Object[args.length];
+                int i = 0;
+                for (Class<?> paramType : paramTypes) {
+                    ServerInterfaceClassName an = paramType.getAnnotation(ServerInterfaceClassName.class);
+                    if (an != null && an.value() != null) {
+                        Class<?> svrParamType = classForName(an.value());
+                        svrParamTypes[i] = svrParamType;
+                        svrArgs[i] = GsonConvertor.convert(args[i], svrParamType);
+                    } else {
+                        svrParamTypes[i] = paramType;
+                        svrArgs[i] = args[i];
+                    }
+                    i++;
+                }
+
+                Method svrMethod = object.getClass().getMethod(method.getName(), svrParamTypes);
+                Object result = svrMethod.invoke(object, svrArgs);
                 Class<?> svrReturnType = svrMethod.getReturnType();
                 Class<?> clientReturnType = method.getReturnType();
                 //注意：虽然我们经过转换拿到了svrMethod，但是这里得到的result，仍然是服务端的return type。
@@ -50,7 +77,7 @@ public class InnerProcessUnknownClassHandler extends InnerProcessHandler {
                 if (svrReturnType.equals(clientReturnType)) {
                     return result;
                 } else {
-                    return GsonConvertor.convertReturnVal(result, clientReturnType);
+                    return GsonConvertor.convert(result, clientReturnType);
                 }
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();

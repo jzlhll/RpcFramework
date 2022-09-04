@@ -3,17 +3,19 @@ package com.rpcframework.client;
 import com.rpcframework.client.supply.IObjectInstanceSupply;
 import com.rpcframework.server.Server;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 public class ClientSDK {
     private ClientSDK() {}
 
     /**
-     * 同进程。
      * @param interfaceClass 客户端的接口
      * @param type 同进程的模式，只有 TYPE_INNER_PROCESS_NOT_SAME_CLASS 和 TYPE_INNER_PROCESS 可选
+     *             不同进程，目前支持TYPE_LOCAL_SOCKET。
      */
-    public static <T> T getRemoteProxyInProcess(Class<T> interfaceClass, String type) {
+    public static <T> T getProxy(Class<T> interfaceClass, String type) {
+        InvocationHandler handler = null;
         if (TYPE_INNER_PROCESS.equals(type)
             || TYPE_INNER_PROCESS_NOT_SAME_CLASS.equals(type)) {
             IObjectInstanceSupply supply = (interfaceOrClsName -> {
@@ -23,12 +25,15 @@ public class ClientSDK {
                     return Server.INSTANCE.getManager().get((Class<?>) interfaceOrClsName);
                 }
             });
-            BaseInvokeHandler handler = InvokeHandlerFactory.create(type, supply);
-            assert handler != null;
-            return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass},
-                    handler);
+            handler = InvokeHandlerFactory.createInProcess(type, supply);
+        } else if (TYPE_LOCAL_SOCKET.equals(type)) {
+            handler = InvokeHandlerFactory.createOutProcess(type);
         }
-        throw new RuntimeException("Error: call getRemoteProxyInProcess() with type: " + type);
+
+        assert handler != null;
+        return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(),
+                new Class<?>[]{interfaceClass},
+                handler);
     }
 
     /**

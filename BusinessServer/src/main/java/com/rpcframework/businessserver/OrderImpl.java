@@ -1,8 +1,7 @@
 package com.rpcframework.businessserver;
 
-import android.util.Log;
-
 import com.rpcframework.businessserver.business.IOrder;
+import com.rpcframework.businessserver.business.MemberBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +9,9 @@ import java.util.List;
 public class OrderImpl implements IOrder {
 
     private final List<String> orderList = new ArrayList<>();
+
     @Override
-    public boolean createOrder() {
-        String s = "orderID:" + Math.random() * 100;
-        orderList.add(s);
-        Log.w("allan", "service create add: " + s);
-        return true;
+    public boolean createOrder(MemberBean bean) {
+        return false;
     }
 }

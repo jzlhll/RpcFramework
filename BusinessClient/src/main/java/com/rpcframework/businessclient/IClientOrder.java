@@ -4,5 +4,5 @@ import com.rpcframework.annotation.ServerInterfaceClassName;
 
 @ServerInterfaceClassName("com.rpcframework.businessserver.business.IOrder")
 public interface IClientOrder {
-    boolean createOrder();
+    boolean createOrder(MemberInfo memberInfo);
 }

@@ -10,6 +10,9 @@ public abstract class ServerManager {
         businessList.put(clazz, instance);
     }
 
+    private ISvrConnector connector;
+
+    public abstract void init();
     /**
      * 先调用get(Class)获取不到，再封装Call过来调用本函数获取。
      *
@@ -43,5 +46,13 @@ public abstract class ServerManager {
     public final Object get(Class<?> clientInterfaceClass) {
         //获取到了，同模块（或者共同引用到了sdk的业务接口）直接通过同一个接口class->真实对象
         return businessList.get(clientInterfaceClass);
+    }
+
+    public void setConnector(ISvrConnector connector) {
+        this.connector = connector;
+    }
+
+    public ISvrConnector getConnector() {
+        return connector;
     }
 }
