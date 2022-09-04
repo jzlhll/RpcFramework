@@ -1,5 +1,5 @@
 package com.rpcframework.businessserver.business;
 
 public interface IOrder {
-    boolean createOrder(MemberBean bean);
+    OrderBean createOrder(MemberBean bean);
 }

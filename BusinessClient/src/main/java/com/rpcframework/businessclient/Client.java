@@ -11,6 +11,7 @@ public class Client {
         MemberInfo i = new MemberInfo();
         i.accountName = "dsafte";
         i.id = "897";
-        boolean orderId = order.createOrder(i);
+        OrderBean bean = order.createOrder(i);
+        System.out.println("bean " + bean);
     }
 }
