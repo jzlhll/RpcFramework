@@ -1,12 +1,12 @@
-package com.rpcframework.client.handler;
+package com.rpcframework.client.invokehandler.socket;
 
-import com.rpcframework.client.ClientSDK;
+import com.rpcframework.client.BaseInvokeHandler;
 import com.rpcframework.client.supply.IObjectInstanceSupply;
 
 import java.lang.reflect.Method;
 
-public class BroadcastHandler extends ClientSDK.RpcHandler {
-    public BroadcastHandler(IObjectInstanceSupply supply) {
+public class SocketHandler extends BaseInvokeHandler {
+    public SocketHandler(IObjectInstanceSupply supply) {
         super(supply);
     }
 

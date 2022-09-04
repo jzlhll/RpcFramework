@@ -1,12 +1,12 @@
-package com.rpcframework.client.inprocesshandler;
+package com.rpcframework.client.invokehandler.inprocess;
 
-import com.rpcframework.client.ClientSDK;
+import com.rpcframework.client.BaseInvokeHandler;
 import com.rpcframework.client.supply.IObjectInstanceSupply;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class InnerProcessHandler extends ClientSDK.RpcHandler {
+public class InnerProcessHandler extends BaseInvokeHandler {
     public InnerProcessHandler(IObjectInstanceSupply supply) {
         super(supply);
     }

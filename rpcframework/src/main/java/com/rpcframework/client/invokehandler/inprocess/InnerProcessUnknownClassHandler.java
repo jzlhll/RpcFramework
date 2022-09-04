@@ -1,4 +1,4 @@
-package com.rpcframework.client.inprocesshandler;
+package com.rpcframework.client.invokehandler.inprocess;
 
 import com.rpcframework.annotation.ServerInterfaceClassName;
 import com.rpcframework.util.GsonConvertor;
