@@ -28,10 +28,10 @@ public class InnerProcessUnknownClassHandler extends InnerProcessHandler {
         }
 
         //2. 本进程，interfaceClass并非服务端存的key，我们就要构造出服务端的key
-        ServerInterfaceClassName ann = methodDeclaredClass.getAnnotation(ServerInterfaceClassName.class);
+        ServerInterfaceClassName annotation = methodDeclaredClass.getAnnotation(ServerInterfaceClassName.class);
         String clsName;
-        if (ann != null) { //如果有注解，我们就使用注解
-            clsName = ann.value();
+        if (annotation != null) { //如果有注解，我们就使用注解
+            clsName = annotation.value();
         } else { //没有注解，我们则认为跟远端同接口。比较适用于不同app
             clsName = methodDeclaredClass.getName();
         }

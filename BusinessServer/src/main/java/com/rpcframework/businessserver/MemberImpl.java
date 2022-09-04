@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.rpcframework.businessserver.business.IMember;
 import com.rpcframework.businessserver.business.MemberBean;
-import com.rpcframework.sdk.BeanTest;
 
 import java.util.ArrayList;
 import java.util.List;
