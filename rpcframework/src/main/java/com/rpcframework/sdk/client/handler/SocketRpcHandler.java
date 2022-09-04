@@ -11,7 +11,7 @@ public class SocketRpcHandler extends ClientSDK.RpcHandler {
     }
 
     @Override
-    protected Object sendCall(Method method, Object[] args) {
+    protected Object sendCall(Class<?> methodDeclaringClass, Method method, Object[] args) {
         return null;
     }
 }

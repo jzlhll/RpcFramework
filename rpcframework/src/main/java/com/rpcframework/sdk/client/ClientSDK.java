@@ -4,6 +4,7 @@ import com.rpcframework.sdk.client.supply.IObjectInstanceSupply;
 import com.rpcframework.sdk.server.Server;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -27,7 +28,6 @@ public class ClientSDK {
             });
             RpcHandler handler = RpcHandlerFactory.create(type, supply);
             assert handler != null;
-            handler.setInterfaceClass(interfaceClass);
             return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass},
                     handler);
         }
@@ -38,14 +38,26 @@ public class ClientSDK {
         public RpcHandler(IObjectInstanceSupply supply) {
             this.supply = supply;
         }
-        //业务的接口
-        private Class<?> interfaceClass;
         //通过业务接口查找对象的提供者
         protected final IObjectInstanceSupply supply;
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {
-            return sendCall(method, args);
+            if (supply == null) {
+                throw new RuntimeException("no supply in InnerProcessHandler!");
+            }
+
+            //避免hashCode，toString，equals出错
+            Class<?> methodDeclaringClass = method.getDeclaringClass();
+            if (Object.class.equals(methodDeclaringClass)) {
+                try {
+                    return method.invoke(this, args);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            return sendCall(methodDeclaringClass, method, args);
         }
 
         /**
@@ -53,14 +65,6 @@ public class ClientSDK {
          * @param args 略
          * @return 略
          */
-        protected abstract Object sendCall(Method method, Object[] args);
-
-        public final Class<?> getInterfaceClass() {
-            return interfaceClass;
-        }
-
-        public final void setInterfaceClass(Class<?> interfaceClass) {
-            this.interfaceClass = interfaceClass;
-        }
+        protected abstract Object sendCall(Class<?> methodDeclaringClass, Method method, Object[] args);
     }
 }

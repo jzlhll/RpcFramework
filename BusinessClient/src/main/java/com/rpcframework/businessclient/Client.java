@@ -2,6 +2,7 @@ package com.rpcframework.businessclient;
 
 import android.util.Log;
 
+import com.rpcframework.sdk.client.GsonConvertor;
 import com.rpcframework.sdk.client.ClientSDK;
 import com.rpcframework.sdk.client.RpcHandlerFactory;
 
@@ -11,9 +12,12 @@ public class Client {
                 IClientOrder.class,
                 RpcHandlerFactory.TYPE_INNER_PROCESS_NO_CLASS
         );
-        String orderId = order.createOrder();
-        Log.w("allan", "orderId: " + orderId);
+        //boolean orderId = order.createOrder();
+        //Log.w("allan", "orderId: " + orderId);
 
-        I
+        IMyMember m = ClientSDK.getRemoteProxyInProcess(IMyMember.class, RpcHandlerFactory.TYPE_INNER_PROCESS_NO_CLASS);
+        //ERROR: 因为服务端的是MemberBean；所以这里类型是无法强转的
+        MemberInfo info = m.createAccount("allan", "123456");
+        Log.w("allan", "memberInfo: " + info);
     }
 }

@@ -12,29 +12,10 @@ public class InnerProcessHandler extends ClientSDK.RpcHandler {
     }
 
     @Override
-    protected final Object sendCall(Method method, Object[] args) {
-        if (supply == null) {
-            throw new RuntimeException("no supply in InnerProcessHandler!");
-        }
-
-        //避免hashCode，toString，equals出错
-        Class<?> interfaceClass = method.getDeclaringClass();
-        if (Object.class.equals(interfaceClass)) {
-            try {
-                return method.invoke(this, args);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        return sendCallInner(interfaceClass, method, args);
-    }
-
-    protected Object sendCallInner(Class<?> methodDeclaredClass, Method method, Object[] args) {
-        Object object = supply.get(methodDeclaredClass);
+    protected Object sendCall(Class<?> methodDeclaringClass, Method method, Object[] args) {
+        Object object = supply.get(methodDeclaringClass);
         if (object == null) {
-            throw new RuntimeException("cannot find service impl of: " + methodDeclaredClass);
+            throw new RuntimeException("cannot find service impl of: " + methodDeclaringClass);
         }
 
         try {

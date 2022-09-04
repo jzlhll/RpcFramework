@@ -1,7 +1,10 @@
 package com.rpcframework.businessserver;
 
+import android.util.Log;
+
 import com.rpcframework.businessserver.business.IMember;
 import com.rpcframework.businessserver.business.MemberBean;
+import com.rpcframework.sdk.BeanTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,7 @@ public class MemberImpl implements IMember {
         b.id = String.valueOf(Math.random() * 10000);
         b.token = b.id;
         beans.add(b);
-        System.out.println("service create a new Member: " + b);
+        Log.d("allan", "service create a new Member: " + b);
         return b;
     }
 }
