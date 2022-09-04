@@ -1,7 +1,7 @@
-package com.rpcframework.sdk.client.handler;
+package com.rpcframework.client.inprocesshandler;
 
-import com.rpcframework.sdk.client.ClientSDK;
-import com.rpcframework.sdk.client.supply.IObjectInstanceSupply;
+import com.rpcframework.client.ClientSDK;
+import com.rpcframework.client.supply.IObjectInstanceSupply;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

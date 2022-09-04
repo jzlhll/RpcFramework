@@ -2,7 +2,7 @@ package com.rpcframework.businessserver;
 
 import com.rpcframework.businessserver.business.IMember;
 import com.rpcframework.businessserver.business.IOrder;
-import com.rpcframework.sdk.server.ServerManager;
+import com.rpcframework.server.ServerManager;
 
 public class ServiceBusinessManager extends ServerManager {
 

@@ -1,9 +1,10 @@
-package com.rpcframework.sdk.client;
+package com.rpcframework.client;
 
-import com.rpcframework.sdk.client.handler.InnerProcessUnknownClassHandler;
-import com.rpcframework.sdk.client.handler.InnerProcessHandler;
-import com.rpcframework.sdk.client.handler.SocketRpcHandler;
-import com.rpcframework.sdk.client.supply.IObjectInstanceSupply;
+import com.rpcframework.client.inprocesshandler.InnerProcessUnknownClassHandler;
+import com.rpcframework.client.inprocesshandler.InnerProcessHandler;
+import com.rpcframework.client.sockethandler.LocalSocketHandler;
+import com.rpcframework.client.sockethandler.SocketHandler;
+import com.rpcframework.client.supply.IObjectInstanceSupply;
 
 public final class RpcHandlerFactory {
     public static final String TYPE_INNER_PROCESS  = "innerProcess";
@@ -20,7 +21,9 @@ public final class RpcHandlerFactory {
             case TYPE_INNER_PROCESS_NO_CLASS:
                 return new InnerProcessUnknownClassHandler(supply);
             case TYPE_SOCKET:
-                return new SocketRpcHandler(supply);
+                return new SocketHandler(supply);
+            case TYPE_LOCAL_SOCKET:
+                return new LocalSocketHandler(supply);
             //todo Broadcast:
             //todo Messenger
             //todo aidl

@@ -1,4 +1,4 @@
-package com.rpcframework.sdk.server;
+package com.rpcframework.server;
 
 public class Server {
     private Server() {}

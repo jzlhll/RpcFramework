@@ -1,4 +1,4 @@
-package com.rpcframework.sdk.server;
+package com.rpcframework.server;
 
 import java.util.Collections;
 import java.util.HashMap;

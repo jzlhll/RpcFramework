@@ -1,4 +1,4 @@
-package com.rpcframework.sdk.client;
+package com.rpcframework.util;
 
 import com.google.gson.Gson;
 

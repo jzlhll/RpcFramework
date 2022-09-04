@@ -1,4 +1,4 @@
-package com.rpcframework.sdk;
+package com.rpcframework.util;
 
 public final class RpcLog {
     private static final String LOG_TAG = "rpc_sdk";

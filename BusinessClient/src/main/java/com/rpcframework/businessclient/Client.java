@@ -2,9 +2,8 @@ package com.rpcframework.businessclient;
 
 import android.util.Log;
 
-import com.rpcframework.sdk.client.GsonConvertor;
-import com.rpcframework.sdk.client.ClientSDK;
-import com.rpcframework.sdk.client.RpcHandlerFactory;
+import com.rpcframework.client.ClientSDK;
+import com.rpcframework.client.RpcHandlerFactory;
 
 public class Client {
     public void test() {
