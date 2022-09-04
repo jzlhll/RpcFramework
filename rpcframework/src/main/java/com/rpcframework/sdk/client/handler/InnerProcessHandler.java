@@ -7,13 +7,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class InnerProcessHandler extends ClientSDK.RpcHandler {
-
     public InnerProcessHandler(IObjectInstanceSupply supply) {
         super(supply);
     }
 
     @Override
-    protected Object sendCall(Method method, Object[] args) {
+    protected final Object sendCall(Method method, Object[] args) {
         if (supply == null) {
             throw new RuntimeException("no supply in InnerProcessHandler!");
         }
@@ -29,10 +28,15 @@ public class InnerProcessHandler extends ClientSDK.RpcHandler {
             }
         }
 
-        Object object = supply.get(interfaceClass);
+        return sendCallInner(interfaceClass, method, args);
+    }
+
+    protected Object sendCallInner(Class<?> methodDeclaredClass, Method method, Object[] args) {
+        Object object = supply.get(methodDeclaredClass);
         if (object == null) {
-            throw new RuntimeException("cannot find service impl of: " + interfaceClass);
+            throw new RuntimeException("cannot find service impl of: " + methodDeclaredClass);
         }
+
         try {
             return method.invoke(object, args);
         } catch (IllegalAccessException | InvocationTargetException e) {

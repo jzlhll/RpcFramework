@@ -12,6 +12,8 @@ public class Client {
                 RpcHandlerFactory.TYPE_INNER_PROCESS_NO_CLASS
         );
         String orderId = order.createOrder();
-        Log.d("allan", "orderId: " + orderId);
+        Log.w("allan", "orderId: " + orderId);
+
+        I
     }
 }

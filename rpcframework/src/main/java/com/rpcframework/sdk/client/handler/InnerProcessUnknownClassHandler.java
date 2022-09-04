@@ -15,45 +15,40 @@ public class InnerProcessUnknownClassHandler extends InnerProcessHandler {
     }
 
     @Override
-    protected Object sendCall(Method method, Object[] args) {
-        //避免hashCode，toString，equals出错
-        Class<?> interfaceClass = method.getDeclaringClass();
-        if (Object.class.equals(interfaceClass)) {
+    protected Object sendCallInner(Class<?> methodDeclaredClass, Method method, Object[] args) {
+        //1. 本进程，而且interfaceClass也是直接服务端的key。
+        Object object = supply.get(methodDeclaredClass);
+        if (object != null) {
+            //只要获取到了，不论啥情况都return。因为就是这个class
             try {
-                return method.invoke(this, args);
+                return method.invoke(object, args);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
-                return null;
             }
+            return null;
         }
 
-        //首先，先用同进程，同业务接口方式获取。
-        Object object = super.sendCall(method, args);
-        if (object != null) {
-            return object;
-        }
-
-        //然后，获取不到了。
-        ServerInterfaceClassName ann = getInterfaceClass().getDeclaredAnnotation(ServerInterfaceClassName.class);
+        //2. 本进程，interfaceClass并非服务端存的key，我们就要构造出服务端的key
+        ServerInterfaceClassName ann = getInterfaceClass().getAnnotation(ServerInterfaceClassName.class);
         String clsName;
         if (ann != null) { //如果有注解，我们就使用注解
             clsName = ann.value();
-        } else { //没有注解，我们认为跟远端同接口。todo 比较适用于不同app
+        } else { //没有注解，我们则认为跟远端同接口。比较适用于不同app
             clsName = getInterfaceClass().getName();
         }
 
         object = supply.get(clsName);
         if (object != null) {
             try {
-                //测试，同函数签名即可？
-                return method.invoke(object, args);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+                //将接口转变为服务器的接口
+                Method svrMethod =  object.getClass().getMethod(method.getName(), method.getParameterTypes());
+                return svrMethod.invoke(object, args);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
                 return null;
             }
         }
 
-        //todo Call call = new Call(clsName, method.getName(), method.getParameterTypes(), args);
-        throw new RuntimeException("cannot find service impl of: " + interfaceClass);
+        throw new RuntimeException("cannot find service impl of: " + methodDeclaredClass);
     }
 }

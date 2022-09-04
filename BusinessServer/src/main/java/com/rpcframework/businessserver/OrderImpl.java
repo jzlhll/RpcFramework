@@ -1,5 +1,7 @@
 package com.rpcframework.businessserver;
 
+import android.util.Log;
+
 import com.rpcframework.businessserver.business.IOrder;
 
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ public class OrderImpl implements IOrder {
     public String createOrder() {
         String s = "orderID:" + Math.random() * 100;
         orderList.add(s);
-        System.out.println("service create add: " + s);
+        Log.w("allan", "service create add: " + s);
         return s;
     }
 }
