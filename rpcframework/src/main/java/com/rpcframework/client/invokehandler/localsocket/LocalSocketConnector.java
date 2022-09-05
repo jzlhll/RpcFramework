@@ -4,6 +4,7 @@ import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 
 import com.rpcframework.Call;
+import com.rpcframework.Response;
 import com.rpcframework.client.IClientConnector;
 import com.rpcframework.server.socket.LocalSocketSvrConnector;
 
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * todo 实现非oneshot
@@ -31,9 +33,18 @@ public class LocalSocketConnector implements IClientConnector {
     }
 
     @Override
-    public void sendCall(Call call) {
-        thread = new LocalSocketClientThread(call);
+    public Response sendCall(Call call) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        Response r = new Response();
+        thread = new LocalSocketClientThread(call, latch, r);
         thread.start();
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return r;
     }
 
     @Override
@@ -42,10 +53,14 @@ public class LocalSocketConnector implements IClientConnector {
     }
 
     private static class LocalSocketClientThread extends Thread {
-        LocalSocketClientThread(Call c) {
+        LocalSocketClientThread(Call c, CountDownLatch latch, Response r) {
             call = c;
+            this.latch = latch;
+            this.response = r;
         }
 
+        private final Response response;
+        private final CountDownLatch latch;
         private final Call call;
 
         private static final String TAG = LocalSocketHandler.class.getSimpleName();
@@ -108,7 +123,6 @@ public class LocalSocketConnector implements IClientConnector {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
         @Override
@@ -122,6 +136,15 @@ public class LocalSocketConnector implements IClientConnector {
                     e.printStackTrace();
                 }
 
+                try {
+                    response.setResult(mIn.readObject());
+                } catch (ClassNotFoundException | IOException e) {
+                    e.printStackTrace();
+                    response.setErrorCode(-1);
+                    response.setException(e.getMessage());
+                }
+
+                latch.countDown();
                 unInit();
             }
         }
