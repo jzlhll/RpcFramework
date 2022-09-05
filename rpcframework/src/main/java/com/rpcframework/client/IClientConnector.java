@@ -1,11 +1,11 @@
 package com.rpcframework.client;
 
 import com.rpcframework.Call;
-import com.rpcframework.Response;
+import com.rpcframework.RpcReturnVal;
 
 public interface IClientConnector {
     boolean isConnected();
     void connect();
-    Response sendCall(Call call);
+    RpcReturnVal sendCall(Call call);
     void disconnect();
 }

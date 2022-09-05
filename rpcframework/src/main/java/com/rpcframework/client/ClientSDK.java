@@ -14,7 +14,7 @@ public class ClientSDK {
      * @param type 同进程的模式，只有 TYPE_INNER_PROCESS_NOT_SAME_CLASS 和 TYPE_INNER_PROCESS 可选
      *             不同进程，目前支持TYPE_LOCAL_SOCKET。
      */
-    public static <T> T getProxy(Class<T> interfaceClass, String type) {
+    public static <T> T getProxyInProcess(Class<T> interfaceClass, String type) {
         InvocationHandler handler = null;
         if (TYPE_INNER_PROCESS.equals(type)
             || TYPE_INNER_PROCESS_NOT_SAME_CLASS.equals(type)) {
@@ -26,8 +26,6 @@ public class ClientSDK {
                 }
             });
             handler = InvokeHandlerFactory.createInProcess(type, supply);
-        } else if (TYPE_LOCAL_SOCKET.equals(type)) {
-            handler = InvokeHandlerFactory.createOutProcess(type);
         }
 
         assert handler != null;
@@ -35,6 +33,21 @@ public class ClientSDK {
                 new Class<?>[]{interfaceClass},
                 handler);
     }
+
+    //虽然传入的是IHasCallbackBis,并且服务端也基于这个实现。
+//    public static Object getProxyOutProcess(Class<? extends ICallback> interfaceClass,
+//                                            String svrBisName,
+//                                            String type) {
+//        InvocationHandler handler = null;
+//        if (TYPE_LOCAL_SOCKET.equals(type)) {
+//            handler = InvokeHandlerFactory.createOutProcess(type);
+//        }
+//
+//        assert handler != null;
+//        return Proxy.newProxyInstance(interfaceClass.getClassLoader(),
+//                new Class<?>[]{interfaceClass},
+//                handler);
+//    }
 
     /**
      * 同一个进程；并且业务接口类，服务端和客户端都可直接访问

@@ -1,17 +1,25 @@
 package com.rpcframework;
 
+import com.rpcframework.client.invokehandler.inprocess.InnerProcessUnknownClassHandler;
+
 import java.io.Serializable;
 
-public class Response implements Serializable {
+/**
+ * 同进程的模式下，是用不上这个的。
+ * 1. 同进程，同接口业务类，InnerProcessHandler直接使用return type即可；
+ * 2. 同进程，不同接口业务类，在{@link InnerProcessUnknownClassHandler}中sendCall，
+ *      就可以进行类型转换（虽然是通过将原Object变成jsonStr，再行转换而成）。
+ */
+public class RpcReturnVal implements Serializable {
     private static final long serialVersionUID = -22008413379294L;
 
-    public Response(){}
+    public RpcReturnVal(){}
 
-    public Response(Object result) {
+    public RpcReturnVal(Object result) {
         this.result = result;
     }
 
-    public Response(String exception, int errorCode) {
+    public RpcReturnVal(String exception, int errorCode) {
         this.exception = exception;
         this.errorCode = errorCode;
     }
@@ -68,7 +76,7 @@ public class Response implements Serializable {
         this.returnType = returnType;
     }
 
-    public void copyFrom(Response r) {
+    public void copyFrom(RpcReturnVal r) {
         this.errorCode = r.errorCode;
         this.exception = r.exception;
         this.result = r.result;

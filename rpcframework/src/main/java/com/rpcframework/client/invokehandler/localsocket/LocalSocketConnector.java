@@ -4,15 +4,13 @@ import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 
 import com.rpcframework.Call;
-import com.rpcframework.Response;
+import com.rpcframework.RpcReturnVal;
 import com.rpcframework.client.IClientConnector;
 import com.rpcframework.server.socket.LocalSocketSvrConnector;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -33,9 +31,9 @@ public class LocalSocketConnector implements IClientConnector {
     }
 
     @Override
-    public Response sendCall(Call call) {
+    public RpcReturnVal sendCall(Call call) {
         final CountDownLatch latch = new CountDownLatch(1);
-        Response r = new Response();
+        RpcReturnVal r = new RpcReturnVal();
         thread = new LocalSocketClientThread(call, latch, r);
         thread.start();
         try {
@@ -53,13 +51,13 @@ public class LocalSocketConnector implements IClientConnector {
     }
 
     private static class LocalSocketClientThread extends Thread {
-        LocalSocketClientThread(Call c, CountDownLatch latch, Response r) {
+        LocalSocketClientThread(Call c, CountDownLatch latch, RpcReturnVal r) {
             call = c;
             this.latch = latch;
             this.response = r;
         }
 
-        private final Response response;
+        private final RpcReturnVal response;
         private final CountDownLatch latch;
         private final Call call;
 

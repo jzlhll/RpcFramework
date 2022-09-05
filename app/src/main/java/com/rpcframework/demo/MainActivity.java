@@ -2,8 +2,6 @@ package com.rpcframework.demo;
 
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
@@ -13,9 +11,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.rpcframework.businessclient.Client;
+import com.rpcframework.businessclient.ClientTest;
 import com.rpcframework.businessserver.ServerInit;
-import com.rpcframework.demo.R;
 import com.rpcframework.demo.databinding.ActivityMainBinding;
 
 import android.view.Menu;
@@ -45,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //调用服务端代码demo
-                new Client().test();
+                new ClientTest().test();
             }
         });
     }
