@@ -1,9 +1,9 @@
 package com.rpcframework.server;
 
-public class Server {
-    private Server() {}
+public class ServerSDK {
+    private ServerSDK() {}
 
-    public static final Server INSTANCE = new Server();
+    public static final ServerSDK INSTANCE = new ServerSDK();
 
     private ServerManager manager;
     public void setManager(ServerManager manager) {

@@ -1,8 +1,5 @@
 package com.rpcframework.server;
 
-import com.rpcframework.business.ICallback;
-import com.rpcframework.business.IHasCbBusiness;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,70 +9,70 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ServerManager {
     private final Map<Class<?>, Object> businessList = Collections.synchronizedMap(new HashMap<>());
-    private final Map<Class<? extends IHasCbBusiness>, Set<ICallback>> eachBusinessObservers =
-            new ConcurrentHashMap<>();
+//    private final Map<Class<? extends IHasCbBusiness>, Set<ICallback>> eachBusinessObservers =
+//            new ConcurrentHashMap<>();
 
-    public final void addListener(Object clazzOrStr, ICallback callback) {
-        Class<? extends IHasCbBusiness> clazz = null;
-        if (clazzOrStr instanceof String) {
-            Class<?> cls = null;
-            try {
-                cls = Class.forName((String) clazzOrStr);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            if (cls != null && cls.isInterface() && cls.isAssignableFrom(IHasCbBusiness.class)) {
-                clazz = (Class<? extends IHasCbBusiness>) cls;
-            }
-        } else {
-            Class<?> cls = (Class<?>) clazzOrStr;
-            if (cls.isAssignableFrom(IHasCbBusiness.class)) {
-                clazz = (Class<? extends IHasCbBusiness>) cls;
-            }
-        }
-
-        if (clazz != null) {
-            Set<ICallback> callbacks = eachBusinessObservers.get(clazz);
-            if (callbacks == null) {
-                callbacks = new HashSet<>(2);
-                eachBusinessObservers.put(clazz, callbacks);
-            }
-
-            callbacks.add(callback);
-        }
-    }
-
-    public final void removeListener(Object clazzOrStr, ICallback callback) {
-        Class<? extends IHasCbBusiness> clazz = null;
-        if (clazzOrStr instanceof String) {
-            Class<?> cls = null;
-            try {
-                cls = Class.forName((String) clazzOrStr);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            if (cls != null && cls.isInterface() && cls.isAssignableFrom(IHasCbBusiness.class)) {
-                clazz = (Class<? extends IHasCbBusiness>) cls;
-            }
-        } else {
-            Class<?> cls = (Class<?>) clazzOrStr;
-            if (cls.isAssignableFrom(IHasCbBusiness.class)) {
-                clazz = (Class<? extends IHasCbBusiness>) cls;
-            }
-        }
-
-        if (clazz != null) {
-            Set<ICallback> callbacks = eachBusinessObservers.get(clazz);
-            if (callbacks == null) {
-                return;
-            }
-
-            callbacks.remove(callback);
-            if (callbacks.size() == 0) {
-                eachBusinessObservers.remove(clazz);
-            }
-        }
-    }
+//    public final void addListener(Object clazzOrStr, ICallback callback) {
+//        Class<? extends IHasCbBusiness> clazz = null;
+//        if (clazzOrStr instanceof String) {
+//            Class<?> cls = null;
+//            try {
+//                cls = Class.forName((String) clazzOrStr);
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//            if (cls != null && cls.isInterface() && cls.isAssignableFrom(IHasCbBusiness.class)) {
+//                clazz = (Class<? extends IHasCbBusiness>) cls;
+//            }
+//        } else {
+//            Class<?> cls = (Class<?>) clazzOrStr;
+//            if (cls.isAssignableFrom(IHasCbBusiness.class)) {
+//                clazz = (Class<? extends IHasCbBusiness>) cls;
+//            }
+//        }
+//
+//        if (clazz != null) {
+//            Set<ICallback> callbacks = eachBusinessObservers.get(clazz);
+//            if (callbacks == null) {
+//                callbacks = new HashSet<>(2);
+//                eachBusinessObservers.put(clazz, callbacks);
+//            }
+//
+//            callbacks.add(callback);
+//        }
+//    }
+//
+//    public final void removeListener(Object clazzOrStr, ICallback callback) {
+//        Class<? extends IHasCbBusiness> clazz = null;
+//        if (clazzOrStr instanceof String) {
+//            Class<?> cls = null;
+//            try {
+//                cls = Class.forName((String) clazzOrStr);
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//            if (cls != null && cls.isInterface() && cls.isAssignableFrom(IHasCbBusiness.class)) {
+//                clazz = (Class<? extends IHasCbBusiness>) cls;
+//            }
+//        } else {
+//            Class<?> cls = (Class<?>) clazzOrStr;
+//            if (cls.isAssignableFrom(IHasCbBusiness.class)) {
+//                clazz = (Class<? extends IHasCbBusiness>) cls;
+//            }
+//        }
+//
+//        if (clazz != null) {
+//            Set<ICallback> callbacks = eachBusinessObservers.get(clazz);
+//            if (callbacks == null) {
+//                return;
+//            }
+//
+//            callbacks.remove(callback);
+//            if (callbacks.size() == 0) {
+//                eachBusinessObservers.remove(clazz);
+//            }
+//        }
+//    }
 
     public final void put(Class<?> clazz, Object instance) {
         businessList.put(clazz, instance);

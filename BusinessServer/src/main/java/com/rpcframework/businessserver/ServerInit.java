@@ -2,13 +2,13 @@ package com.rpcframework.businessserver;
 
 import android.util.Log;
 
-import com.rpcframework.server.Server;
+import com.rpcframework.server.ServerSDK;
 
 public class ServerInit {
     public static void init() {
         Log.d("allan", "init server");
         ServiceBusinessManager m = new ServiceBusinessManager();
         m.init();
-        Server.INSTANCE.setManager(m);
+        ServerSDK.INSTANCE.setManager(m);
     }
 }

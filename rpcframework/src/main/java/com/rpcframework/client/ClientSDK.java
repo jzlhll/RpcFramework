@@ -1,7 +1,7 @@
 package com.rpcframework.client;
 
 import com.rpcframework.client.supply.IObjectInstanceSupply;
-import com.rpcframework.server.Server;
+import com.rpcframework.server.ServerSDK;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -20,9 +20,9 @@ public class ClientSDK {
             || TYPE_INNER_PROCESS_NOT_SAME_CLASS.equals(type)) {
             IObjectInstanceSupply supply = (interfaceOrClsName -> {
                 if (interfaceOrClsName instanceof String) {
-                    return Server.INSTANCE.getManager().get((String) interfaceOrClsName);
+                    return ServerSDK.INSTANCE.getManager().get((String) interfaceOrClsName);
                 } else {
-                    return Server.INSTANCE.getManager().get((Class<?>) interfaceOrClsName);
+                    return ServerSDK.INSTANCE.getManager().get((Class<?>) interfaceOrClsName);
                 }
             });
             handler = InvokeHandlerFactory.createInProcess(type, supply);
