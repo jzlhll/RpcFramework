@@ -1,10 +1,10 @@
-package com.rpcframework.client.invokehandler.localsocket;
+package com.rpcframework.client.invocations.socket;
 
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 
 import com.rpcframework.Call;
-import com.rpcframework.RpcReturnVal;
+import com.rpcframework.ReturnPack;
 import com.rpcframework.client.IClientConnector;
 import com.rpcframework.server.socket.LocalSocketSvrConnector;
 
@@ -31,9 +31,9 @@ public class LocalSocketConnector implements IClientConnector {
     }
 
     @Override
-    public RpcReturnVal sendCall(Call call) {
+    public ReturnPack sendCall(Call call) {
         final CountDownLatch latch = new CountDownLatch(1);
-        RpcReturnVal r = new RpcReturnVal();
+        ReturnPack r = new ReturnPack();
         thread = new LocalSocketClientThread(call, latch, r);
         thread.start();
         try {
@@ -51,13 +51,13 @@ public class LocalSocketConnector implements IClientConnector {
     }
 
     private static class LocalSocketClientThread extends Thread {
-        LocalSocketClientThread(Call c, CountDownLatch latch, RpcReturnVal r) {
+        LocalSocketClientThread(Call c, CountDownLatch latch, ReturnPack r) {
             call = c;
             this.latch = latch;
             this.response = r;
         }
 
-        private final RpcReturnVal response;
+        private final ReturnPack response;
         private final CountDownLatch latch;
         private final Call call;
 

@@ -1,4 +1,4 @@
-package com.rpcframework.client.invokehandler.other;
+package com.rpcframework.client.invocations.other;
 
 import com.rpcframework.client.BaseRpcInvokeHandler;
 import com.rpcframework.client.IClientConnector;

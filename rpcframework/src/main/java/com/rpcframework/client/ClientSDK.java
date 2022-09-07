@@ -1,6 +1,6 @@
 package com.rpcframework.client;
 
-import com.rpcframework.client.supply.IObjectInstanceSupply;
+import com.rpcframework.client.invocations.process.IProcessObjectSupply;
 import com.rpcframework.server.ServerSDK;
 
 import java.lang.reflect.InvocationHandler;
@@ -18,7 +18,7 @@ public class ClientSDK {
         InvocationHandler handler = null;
         if (TYPE_INNER_PROCESS.equals(type)
             || TYPE_INNER_PROCESS_NOT_SAME_CLASS.equals(type)) {
-            IObjectInstanceSupply supply = (interfaceOrClsName -> {
+            IProcessObjectSupply supply = (interfaceOrClsName -> {
                 if (interfaceOrClsName instanceof String) {
                     return ServerSDK.INSTANCE.getManager().get((String) interfaceOrClsName);
                 } else {

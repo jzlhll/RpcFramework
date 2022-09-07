@@ -2,11 +2,11 @@ package com.rpcframework.client;
 
 import static com.rpcframework.client.ClientSDK.*;
 
-import com.rpcframework.client.invokehandler.inprocess.InnerProcessUnknownClassHandler;
-import com.rpcframework.client.invokehandler.inprocess.InnerProcessHandler;
-import com.rpcframework.client.invokehandler.localsocket.LocalSocketHandler;
-import com.rpcframework.client.invokehandler.other.SocketHandler;
-import com.rpcframework.client.supply.IObjectInstanceSupply;
+import com.rpcframework.client.invocations.process.IProcessObjectSupply;
+import com.rpcframework.client.invocations.process.InnerProcessUnknownClassHandler;
+import com.rpcframework.client.invocations.process.InnerProcessHandler;
+import com.rpcframework.client.invocations.socket.LocalSocketHandler;
+import com.rpcframework.client.invocations.other.SocketHandler;
 
 import java.lang.reflect.InvocationHandler;
 
@@ -25,7 +25,7 @@ final class InvokeHandlerFactory {
         return null;
     }
 
-    public static InvocationHandler createInProcess(String type, IObjectInstanceSupply supply) {
+    public static InvocationHandler createInProcess(String type, IProcessObjectSupply supply) {
         switch (type) {
             case TYPE_INNER_PROCESS:
                 return new InnerProcessHandler(supply);

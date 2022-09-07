@@ -1,6 +1,6 @@
 package com.rpcframework;
 
-import com.rpcframework.client.invokehandler.inprocess.InnerProcessUnknownClassHandler;
+import com.rpcframework.client.invocations.process.InnerProcessUnknownClassHandler;
 
 import java.io.Serializable;
 
@@ -10,16 +10,16 @@ import java.io.Serializable;
  * 2. 同进程，不同接口业务类，在{@link InnerProcessUnknownClassHandler}中sendCall，
  *      就可以进行类型转换（虽然是通过将原Object变成jsonStr，再行转换而成）。
  */
-public class RpcReturnVal implements Serializable {
+public class ReturnPack implements Serializable {
     private static final long serialVersionUID = -22008413379294L;
 
-    public RpcReturnVal(){}
+    public ReturnPack(){}
 
-    public RpcReturnVal(Object result) {
+    public ReturnPack(Object result) {
         this.result = result;
     }
 
-    public RpcReturnVal(String exception, int errorCode) {
+    public ReturnPack(String exception, int errorCode) {
         this.exception = exception;
         this.errorCode = errorCode;
     }
@@ -76,7 +76,7 @@ public class RpcReturnVal implements Serializable {
         this.returnType = returnType;
     }
 
-    public void copyFrom(RpcReturnVal r) {
+    public void copyFrom(ReturnPack r) {
         this.errorCode = r.errorCode;
         this.exception = r.exception;
         this.result = r.result;

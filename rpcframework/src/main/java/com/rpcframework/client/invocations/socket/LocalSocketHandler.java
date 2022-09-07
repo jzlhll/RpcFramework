@@ -1,4 +1,4 @@
-package com.rpcframework.client.invokehandler.localsocket;
+package com.rpcframework.client.invocations.socket;
 
 import com.rpcframework.client.BaseRpcInvokeHandler;
 import com.rpcframework.client.IClientConnector;

@@ -1,23 +1,26 @@
-package com.rpcframework.client.invokehandler.inprocess;
+package com.rpcframework.client.invocations.process;
 
 import com.rpcframework.annotation.ServerInterfaceClassName;
-import com.rpcframework.common.IInProcessClientCallback;
+import com.rpcframework.client.ICallback;
 import com.rpcframework.util.GsonConvertor;
-import com.rpcframework.client.supply.IObjectInstanceSupply;
+import com.rpcframework.util.ReflectUtil;
 import com.rpcframework.util.RpcLog;
-import com.rpcframework.util.Util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class InnerProcessUnknownClassHandler extends InnerProcessHandler {
+public final class InnerProcessUnknownClassHandler extends InnerProcessHandler {
 
-    public InnerProcessUnknownClassHandler(IObjectInstanceSupply supply) {
+    public InnerProcessUnknownClassHandler(IProcessObjectSupply supply) {
         super(supply);
     }
 
     @Override
     protected Object sendCall(Class<?> methodDeclaredClass, Method method, Object[] args) {
+        if (supply == null) {
+            throw new RuntimeException("no supply in InnerProcessHandler!");
+        }
+
         //1. 本进程，而且interfaceClass也是直接服务端的key。
         Object object = supply.get(methodDeclaredClass);
         if (object != null) {
@@ -54,22 +57,30 @@ public class InnerProcessUnknownClassHandler extends InnerProcessHandler {
             Object[] svrArgs = new Object[args.length];
             int i = 0;
             for (Class<?> paramType : paramTypes) {
-                ServerInterfaceClassName an = paramType.getAnnotation(ServerInterfaceClassName.class);
-                if (an != null && an.value() != null) {
-                    Class<?> svrParamType = Util.classForName(an.value());
-                    svrParamTypes[i] = svrParamType;
-                    if (svrParamType != null && !svrParamType.isInterface()) {
-                        svrArgs[i] = GsonConvertor.convert(args[i], svrParamType); //callback就不能序列化了！
-                    }
-
+                if (paramType.isInterface() && paramType.isAssignableFrom(ICallback.class)) { //证明是一个回调接口
                     //todo 是回调接口类型，就不能如上转了，需要构建出服务端的callback并代理上客户端的代码。
-                    if (svrParamType != null && svrParamType.isInterface()
-                            && paramType.isAssignableFrom(IInProcessClientCallback.class)) {
-                        svrArgs[i] = ;
-                    }
-                } else {
-                    svrParamTypes[i] = paramType;
+                    //思考后：这里都需要将对象
+                    // 同进程：直接将接口传递过去，虽然服务端无法直接获取，但可以在服务端可以基于这个对象getMethod列表；
+                    // 跨进程：这个对象需要是aidl对象或者转变为list<函数名+参数类型+返回值类型>传递。后续基于exchanger交换。
+                    // todo 跨进程实现的时候，转变为list<函数名+参数类型+返回值类型>
                     svrArgs[i] = args[i];
+                    svrParamTypes[i] = paramType;
+                } else {
+                    //证明是参数
+                    //如果有标注注解；就是服务端的自定义对象。我们就要把参数转变过去
+                    ServerInterfaceClassName an = paramType.getAnnotation(ServerInterfaceClassName.class);
+                    if (an != null && an.value() != null) {
+                        Class<?> svrParamType = ReflectUtil.classForName(an.value());
+                        svrParamTypes[i] = svrParamType;
+                        if (svrParamType != null && !svrParamType.isInterface()) {
+                            svrArgs[i] = GsonConvertor.convert(args[i], svrParamType);
+                        } else {
+                            throw new RuntimeException("Error01 when parse svrParamType");
+                        }
+                    } else {
+                        svrParamTypes[i] = paramType;
+                        svrArgs[i] = args[i];
+                    }
                 }
                 i++;
             }

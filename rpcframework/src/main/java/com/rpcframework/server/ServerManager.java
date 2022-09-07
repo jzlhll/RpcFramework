@@ -1,5 +1,7 @@
 package com.rpcframework.server;
 
+import com.rpcframework.util.ReflectUtil;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -97,13 +99,7 @@ public abstract class ServerManager {
     public final Object get(String className) {
         //2. 获取不到。证明同进程，但是无法同时引起业务接口类，需要转换。
         //将客户端的接口的注解翻译成服务器中的接口类。
-        Class<?> svrInterfaceCls = null;
-        try {
-            svrInterfaceCls = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
+        Class<?> svrInterfaceCls = ReflectUtil.classForName(className);
         if (svrInterfaceCls != null) {
             return businessList.get(svrInterfaceCls);
         }
