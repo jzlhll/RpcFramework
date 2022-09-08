@@ -6,8 +6,11 @@ import java.lang.reflect.Method;
 
 public class BroadcastHandler extends BaseInvokeHandler {
 
+    public BroadcastHandler(Class<?> clientInterface) {
+    }
+
     @Override
-    protected Object sendCall(Class<?> methodDeclaringClass, Method method, Object[] args) {
+    protected Object sendCall(Method method, Object[] args) {
         return null;
     }
 }

@@ -25,7 +25,7 @@ public class ClientSDK {
                     return ServerSDK.INSTANCE.getManager().get((Class<?>) interfaceOrClsName);
                 }
             });
-            handler = InvokeHandlerFactory.createInProcess(type, supply);
+            handler = InvokeHandlerFactory.createInProcess(interfaceClass, type, supply);
         }
 
         assert handler != null;

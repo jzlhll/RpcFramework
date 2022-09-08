@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class BaseInvokeHandler implements InvocationHandler {
-
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         //避免hashCode，toString，equals出错
@@ -18,7 +17,7 @@ public abstract class BaseInvokeHandler implements InvocationHandler {
                 return null;
             }
         }
-        return sendCall(methodDeclaringClass, method, args);
+        return sendCall(method, args);
     }
 
     /**
@@ -26,5 +25,5 @@ public abstract class BaseInvokeHandler implements InvocationHandler {
      * @param args 略
      * @return 略
      */
-    protected abstract Object sendCall(Class<?> methodDeclaringClass, Method method, Object[] args);
+    protected abstract Object sendCall(Method method, Object[] args);
 }

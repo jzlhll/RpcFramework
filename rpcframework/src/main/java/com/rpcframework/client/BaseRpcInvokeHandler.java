@@ -3,7 +3,7 @@ package com.rpcframework.client;
 import android.os.Looper;
 
 import com.rpcframework.Call;
-import com.rpcframework.ReturnPack;
+import com.rpcframework.ReturnParcel;
 import com.rpcframework.util.RpcLog;
 
 import java.lang.reflect.InvocationHandler;
@@ -29,7 +29,7 @@ public abstract class BaseRpcInvokeHandler implements InvocationHandler {
                 return null;
             }
         }
-        ReturnPack response = sendCall(methodDeclaringClass, method, args);
+        ReturnParcel response = sendCall(methodDeclaringClass, method, args);
 
         if (response.getErrorCode() != 0) {
             RpcLog.e("BaseRpcInvokeHandler invoke result error: " + response.getException());
@@ -37,7 +37,7 @@ public abstract class BaseRpcInvokeHandler implements InvocationHandler {
         return response.getResult();
     }
 
-    private ReturnPack sendCall(Class<?> methodDeclaringClass, Method method, Object[] args) {
+    private ReturnParcel sendCall(Class<?> methodDeclaringClass, Method method, Object[] args) {
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
             throw new RuntimeException("[BaseRpcInvokeHandler] cannot run in main thread!");
         }
@@ -51,7 +51,7 @@ public abstract class BaseRpcInvokeHandler implements InvocationHandler {
             connector.connect();
         }
         // 发送请求
-        ReturnPack r = connector.sendCall(call);
+        ReturnParcel r = connector.sendCall(call);
         // 获取封装远程方法调用结果的对象
         connector.disconnect();
 

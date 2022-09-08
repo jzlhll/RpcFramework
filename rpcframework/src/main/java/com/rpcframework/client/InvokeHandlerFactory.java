@@ -25,12 +25,12 @@ final class InvokeHandlerFactory {
         return null;
     }
 
-    public static InvocationHandler createInProcess(String type, IProcessObjectSupply supply) {
+    public static InvocationHandler createInProcess(Class<?> clientInterface, String type, IProcessObjectSupply supply) {
         switch (type) {
             case TYPE_INNER_PROCESS:
-                return new InnerProcessHandler(supply);
+                return new InnerProcessHandler(clientInterface, supply);
             case TYPE_INNER_PROCESS_NOT_SAME_CLASS:
-                return new InnerProcessUnknownClassHandler(supply);
+                return new InnerProcessUnknownClassHandler(clientInterface, supply);
         }
 
         return null;
