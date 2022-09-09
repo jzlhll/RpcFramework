@@ -1,8 +1,8 @@
 package com.rpcframework.businessclient;
 
-import com.rpcframework.annotation.ServerInterfaceClassName;
+import com.rpcframework.annotation.MappingSameClassAnnotation;
 
-@ServerInterfaceClassName("com.rpcframework.businessserver.ReturnBean")
+@MappingSameClassAnnotation("com.rpcframework.businessserver.ReturnBean")
 public class ReturnBean {
     public boolean r;
     public String s;

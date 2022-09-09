@@ -1,7 +1,6 @@
-package com.rpcframework.server;
+package com.rpcframework;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
+import com.rpcframework.server.ServerManager;
 
 public class ServerSDK {
     private ServerSDK() {}

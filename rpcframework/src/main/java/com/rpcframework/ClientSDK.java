@@ -1,7 +1,6 @@
-package com.rpcframework.client;
+package com.rpcframework;
 
 import com.rpcframework.client.invocations.process.IProcessObjectSupply;
-import com.rpcframework.server.ServerSDK;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;

@@ -1,4 +1,4 @@
-package com.rpcframework;
+package com.rpcframework.pack;
 
 import java.io.Serializable;
 

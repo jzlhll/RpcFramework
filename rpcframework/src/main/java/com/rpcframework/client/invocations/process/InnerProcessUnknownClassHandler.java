@@ -2,7 +2,7 @@ package com.rpcframework.client.invocations.process;
 
 import android.util.Log;
 
-import com.rpcframework.annotation.ServerInterfaceClassName;
+import com.rpcframework.annotation.MappingSameClassAnnotation;
 import com.rpcframework.ICallback;
 import com.rpcframework.server.IHasCallbackBis;
 import com.rpcframework.server.process.ClientCallbackHandler;
@@ -117,7 +117,7 @@ public final class InnerProcessUnknownClassHandler extends InnerProcessHandler {
                 {
                     //证明是参数
                     //如果有标注注解；就是服务端的自定义对象。我们就要把参数转变过去
-                    ServerInterfaceClassName an = paramType.getAnnotation(ServerInterfaceClassName.class);
+                    MappingSameClassAnnotation an = paramType.getAnnotation(MappingSameClassAnnotation.class);
                     if (an != null && an.value() != null) {
                         Class<?> svrParamType = ReflectUtil.classForName(an.value());
                         svrParamTypes[i] = svrParamType;
@@ -128,7 +128,7 @@ public final class InnerProcessUnknownClassHandler extends InnerProcessHandler {
                         }
                     } else {
                         svrParamTypes[i] = paramType;
-                        svrArgs[i] = args[i];
+                        svrArgs[i] = args[i]; //todo 如果这里是跨进程还是需要转换。
                     }
                 }
                 i++;

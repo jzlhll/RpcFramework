@@ -2,7 +2,7 @@ package com.rpcframework.businessserver;
 
 import android.util.Log;
 
-import com.rpcframework.server.ServerSDK;
+import com.rpcframework.ServerSDK;
 
 public class ServerInit {
     public static void init() {

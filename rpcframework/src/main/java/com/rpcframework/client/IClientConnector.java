@@ -1,7 +1,7 @@
 package com.rpcframework.client;
 
-import com.rpcframework.Call;
-import com.rpcframework.ReturnParcel;
+import com.rpcframework.pack.Call;
+import com.rpcframework.pack.ReturnParcel;
 
 public interface IClientConnector {
     boolean isConnected();

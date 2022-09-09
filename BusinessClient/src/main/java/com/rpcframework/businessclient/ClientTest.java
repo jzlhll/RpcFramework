@@ -2,7 +2,7 @@ package com.rpcframework.businessclient;
 
 import android.util.Log;
 
-import com.rpcframework.client.ClientSDK;
+import com.rpcframework.ClientSDK;
 
 public class ClientTest {
     private static final String TAG = "ClientTest";

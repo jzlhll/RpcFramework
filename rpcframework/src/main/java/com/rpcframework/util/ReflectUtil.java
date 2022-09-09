@@ -1,8 +1,8 @@
 package com.rpcframework.util;
 
 import com.rpcframework.ICallback;
-import com.rpcframework.MethodParcel;
-import com.rpcframework.annotation.ServerInterfaceClassName;
+import com.rpcframework.pack.MethodParcel;
+import com.rpcframework.annotation.MappingSameClassAnnotation;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class ReflectUtil {
     }
 
     public static String clientClassToSvrClassName(Class<?> clazz) {
-        ServerInterfaceClassName annotation = clazz.getAnnotation(ServerInterfaceClassName.class);
+        MappingSameClassAnnotation annotation = clazz.getAnnotation(MappingSameClassAnnotation.class);
         String clsName;
         if (annotation != null) { //如果有注解，我们就使用注解
             clsName = annotation.value();

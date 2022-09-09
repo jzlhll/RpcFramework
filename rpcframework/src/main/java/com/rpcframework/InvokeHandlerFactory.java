@@ -1,6 +1,6 @@
-package com.rpcframework.client;
+package com.rpcframework;
 
-import static com.rpcframework.client.ClientSDK.*;
+import static com.rpcframework.ClientSDK.*;
 
 import com.rpcframework.client.invocations.process.IProcessObjectSupply;
 import com.rpcframework.client.invocations.process.InnerProcessUnknownClassHandler;

@@ -4,10 +4,8 @@ import com.rpcframework.ICallback;
 
 /**
  * 本接口，是给Bis业务接口去继承。
- * 并不一定都需要继承这个。
- * 如果服务端某个业务类支持注册监听回调的模式。就必须实现。
- *
- * 注意：客户端copy以后，必须注解上
+ * 如果服务端某个业务类支持注册监听回调的模式。就必须实现来自本接口。
+ * 如果没有注册回调的需要，则不用实现。
  */
 public interface IHasCallbackBis {
     boolean registerListener(ICallback callback);

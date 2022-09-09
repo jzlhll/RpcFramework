@@ -2,8 +2,8 @@ package com.rpcframework.client;
 
 import android.os.Looper;
 
-import com.rpcframework.Call;
-import com.rpcframework.ReturnParcel;
+import com.rpcframework.pack.Call;
+import com.rpcframework.pack.ReturnParcel;
 import com.rpcframework.util.RpcLog;
 
 import java.lang.reflect.InvocationHandler;
