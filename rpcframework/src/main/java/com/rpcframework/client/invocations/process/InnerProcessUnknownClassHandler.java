@@ -2,16 +2,14 @@ package com.rpcframework.client.invocations.process;
 
 import android.util.Log;
 
-import com.rpcframework.annotation.RegisterCallback;
 import com.rpcframework.annotation.ServerInterfaceClassName;
 import com.rpcframework.ICallback;
-import com.rpcframework.server.IRegisterBis;
+import com.rpcframework.server.IHasCallbackBis;
 import com.rpcframework.server.process.ClientCallbackHandler;
 import com.rpcframework.util.GsonConvertor;
 import com.rpcframework.util.ReflectUtil;
 import com.rpcframework.util.RpcLog;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -44,7 +42,7 @@ public final class InnerProcessUnknownClassHandler extends InnerProcessHandler {
             return false;
         }
 
-        if (!(svrInstance instanceof IRegisterBis)) {
+        if (!(svrInstance instanceof IHasCallbackBis)) {
             RpcLog.d("doIRegisterBisMethods svrInstance is not an IRegisterBis");
             return false;
         }
@@ -54,9 +52,8 @@ public final class InnerProcessUnknownClassHandler extends InnerProcessHandler {
             throw new RuntimeException("Error01 param of " + method.getDeclaringClass() + ", " + name);
         }
         //todo 改成泛型，减少一个注解
-        RegisterCallback n = clientInterface.getAnnotation(RegisterCallback.class); //这样才是最终的类,不能拿paramType[0]，是ICallback没有意义。
-        Class<?> paramType = ReflectUtil.classForName(n.value());
-        IRegisterBis svrInstanceBis = (IRegisterBis) svrInstance;
+        Class<?> paramType = ((IHasCallbackBis) svrInstance).getCallbackClass();
+        IHasCallbackBis svrInstanceBis = (IHasCallbackBis) svrInstance;
 
         //证明是一个回调接口
         //是回调接口类型，就不能如上直接转了，需要构建出服务端的callback并代理上客户端的代码。

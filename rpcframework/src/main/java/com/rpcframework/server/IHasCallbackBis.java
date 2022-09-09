@@ -9,7 +9,12 @@ import com.rpcframework.ICallback;
  *
  * 注意：客户端copy以后，必须注解上
  */
-public interface IRegisterBis {
+public interface IHasCallbackBis {
     boolean registerListener(ICallback callback);
     boolean unRegisterListener(ICallback callback);
+
+    /**
+     * 请返回你给客户端提供的callback子类接口类型。
+     */
+    Class<? extends ICallback> getCallbackClass();
 }

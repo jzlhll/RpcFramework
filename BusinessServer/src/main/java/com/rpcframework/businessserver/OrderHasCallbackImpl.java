@@ -15,6 +15,11 @@ public class OrderHasCallbackImpl implements IOrderBis {
     private final Set<ICallback> callbackSet = new HashSet<>();
 
     @Override
+    public Class<? extends ICallback> getCallbackClass() {
+        return IOrderCallback.class;
+    }
+
+    @Override
     public ReturnBean markAOrder(InInfo info, String name) {
         ReturnBean bean = new ReturnBean();
         bean.r = true;
