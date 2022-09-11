@@ -10,7 +10,7 @@ import com.rpcframework.IAction;
 import com.rpcframework.IAction1;
 import com.rpcframework.log.ALog;
 
-final class ClientConnMgrRetry {
+final class ClientConnMgrRetryHandler extends Handler {
     private static final String TAG = ClientConnMgr.TAG + "Retry";
 
     private final IAction mBind, mUnBind;
@@ -28,58 +28,49 @@ final class ClientConnMgrRetry {
     /**
      * 通过Success来回调成功。
      */
-    public ClientConnMgrRetry(IAction bind, IAction unbind) {
+    public ClientConnMgrRetryHandler(IAction bind, IAction unbind) {
+        super(Looper.getMainLooper());
         mBind = bind;
         mUnBind = unbind;
     }
 
-    private static final class RetryHandler extends Handler {
-        private final ClientConnMgrRetry retry;
-        public RetryHandler(ClientConnMgrRetry retry) {
-            super(Looper.getMainLooper());
-            this.retry = retry;
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
-                case MSG_UNBIND:
-                {
-                    //ALog.d(TAG, "Handler: unbind...");
-                    retry.currentDelay = DELAY_TIME_MIN;
-                    retry.mBindState = false;
-                    retry.mUnBind.onAction();
-                }
-                break;
-                case MSG_RETRY_BIND:
-                {
-                    //ALog.d(TAG, "Handler: retry..");
-                    if (retry.calNextRetryDelayTime()) {
-                        retry.mBind.onAction();
-                        retry.sRetryHandler.sendMessageDelayed(obtainMessage(MSG_RETRY_BIND), retry.currentDelay * 1000L);
-                    } else {
-                        //超过限制。直接停止不再重连。
-                        ALog.d(TAG, "timeout retry!");
-                        retry.currentDelay = DELAY_TIME_MIN;
-                        if(retry.mTimeout != null) retry.mTimeout.onAction(retry.mBindState);
-                    }
-                }
-                    break;
-                case MSG_RETRY_CANCEL:
-                {
-                    //ALog.d(TAG, "Handler: retry cancel end.");
-                    retry.currentDelay = DELAY_TIME_MIN;
-                    retry.mBindState = msg.arg1 == 1;
-                    if(retry.mStopper != null) retry.mStopper.onAction(retry.mBindState);
-                }
-                    break;
+    @Override
+    public void handleMessage(@NonNull Message msg) {
+        switch (msg.what) {
+            case MSG_UNBIND:
+            {
+                //ALog.d(TAG, "Handler: unbind...");
+                currentDelay = DELAY_TIME_MIN;
+                mBindState = false;
+                mUnBind.onAction();
             }
+            break;
+            case MSG_RETRY_BIND:
+            {
+                //ALog.d(TAG, "Handler: retry..");
+                if (calNextRetryDelayTime()) {
+                    mBind.onAction();
+                    sendMessageDelayed(obtainMessage(MSG_RETRY_BIND), currentDelay * 1000L);
+                } else {
+                    //超过限制。直接停止不再重连。
+                    ALog.d(TAG, "timeout retry!");
+                    currentDelay = DELAY_TIME_MIN;
+                    if(mTimeout != null) mTimeout.onAction(mBindState);
+                }
+            }
+                break;
+            case MSG_RETRY_CANCEL:
+            {
+                //ALog.d(TAG, "Handler: retry cancel end.");
+                currentDelay = DELAY_TIME_MIN;
+                mBindState = msg.arg1 == 1;
+                if(mStopper != null) mStopper.onAction(mBindState);
+            }
+                break;
         }
     }
 
     //所有的Retry都共用一个。
-    private final Handler sRetryHandler = new RetryHandler(this);
-
     private static final int MSG_RETRY_BIND = 1;
     private static final int MSG_UNBIND = 2;
     private static final int MSG_RETRY_CANCEL = 3;
@@ -116,11 +107,11 @@ final class ClientConnMgrRetry {
             return;
         }
         //只能移除自己；不能移除解绑和停止消息。
-        sRetryHandler.removeMessages(MSG_RETRY_BIND);
+        removeMessages(MSG_RETRY_BIND);
         currentDelay = DELAY_TIME_MIN;
         //直接开始
         ALog.d(TAG, "...startRetry...");
-        sRetryHandler.sendMessageDelayed(sRetryHandler.obtainMessage(MSG_RETRY_BIND), 250L);
+        sendMessageDelayed(obtainMessage(MSG_RETRY_BIND), 250L);
     }
 
     void startRetryWithDelay() {
@@ -132,12 +123,12 @@ final class ClientConnMgrRetry {
         //直接开始
         ALog.d(TAG, "...startRetryWithDelay:");
         //可以移除任何消息。
-        sRetryHandler.removeMessages(MSG_RETRY_BIND);
-        sRetryHandler.removeMessages(MSG_RETRY_CANCEL);
-        sRetryHandler.removeMessages(MSG_UNBIND);
+        removeMessages(MSG_RETRY_BIND);
+        removeMessages(MSG_RETRY_CANCEL);
+        removeMessages(MSG_UNBIND);
         ALog.d(TAG, "...unbind...");
-        sRetryHandler.sendMessage(sRetryHandler.obtainMessage(MSG_UNBIND));
-        sRetryHandler.sendMessageDelayed(sRetryHandler.obtainMessage(MSG_RETRY_BIND), DELAY_TIME_AFTER_DIED * 1000L);
+        sendMessage(obtainMessage(MSG_UNBIND));
+        sendMessageDelayed(obtainMessage(MSG_RETRY_BIND), DELAY_TIME_AFTER_DIED * 1000L);
     }
 
     void stopRetry(boolean bindState) {
@@ -145,9 +136,9 @@ final class ClientConnMgrRetry {
             return;
         }
         //只移除retry逻辑
-        sRetryHandler.removeMessages(MSG_RETRY_BIND);
+        removeMessages(MSG_RETRY_BIND);
         ALog.d(TAG, "...stopRetry...");
-        sRetryHandler.sendMessage(sRetryHandler.obtainMessage(MSG_RETRY_CANCEL, bindState ? 1 : 0, 0));
+        sendMessage(obtainMessage(MSG_RETRY_CANCEL, bindState ? 1 : 0, 0));
     }
 
     void unbind() {
@@ -155,15 +146,18 @@ final class ClientConnMgrRetry {
             return;
         }
         //可以移除任何消息。
-        sRetryHandler.removeMessages(MSG_RETRY_BIND);
-        sRetryHandler.removeMessages(MSG_RETRY_CANCEL);
-        sRetryHandler.removeMessages(MSG_UNBIND);
+        removeMessages(MSG_RETRY_BIND);
+        removeMessages(MSG_RETRY_CANCEL);
+        removeMessages(MSG_UNBIND);
         ALog.d(TAG, "...unbind...");
-        sRetryHandler.sendMessage(sRetryHandler.obtainMessage(MSG_UNBIND));
+        sendMessage(obtainMessage(MSG_UNBIND));
     }
 
     void destroy() {
         mGotoDestroy = true;
+        removeMessages(MSG_RETRY_BIND);
+        removeMessages(MSG_RETRY_CANCEL);
+        removeMessages(MSG_UNBIND);
         ALog.d(TAG, "...destroy...");
         unbind();
     }

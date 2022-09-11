@@ -19,6 +19,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.rpcframework.aidlstudy.databinding.ActivityMainBinding;
 import com.rpcframework.bean.Info;
+import com.rpcframework.conn.IConnMgr;
 import com.rpcframework.log.ALog;
 import com.rpcframework.study.Util;
 
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
-    private ClientConnMgr mConnMgr;
+    private IConnMgr mConnMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +51,11 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener l = v-> {
             if (v.getId() == binding.bindServiceBtn.getId()) {
                 if (mConnMgr == null) {
-                    mConnMgr = new ClientConnMgr(MainActivity.this);
-                    mConnMgr.setServicePackage("com.rpcframework.aidlstudy")
+                    ClientConnMgr mgr = new ClientConnMgr(MainActivity.this);
+                    mgr.setServicePackage("com.rpcframework.aidlstudy")
                             .setServiceName("com.rpcframework.aidlstudy.MyRemoteService");
+
+                    mConnMgr = mgr;
                 }
                 mConnMgr.bind();
             } else if (v.getId() == binding.unbindServiceBtn.getId()) {
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 info.setOther(12894);
                 bundle.putParcelable("ininfo", info);
                 try {
-                    Bundle ret = mConnMgr.getAidlService().send(bundle);
+                    Bundle ret = mConnMgr.getAidl().send(bundle);
                     ret.setClassLoader(getClassLoader());
                     Util.bundlePrint("client", ret);
                 } catch (RemoteException e) {
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else if (v.getId() == binding.callServerBtn2.getId()) {
                 try {
-                    mConnMgr.getAidlService().registerCallback(new IRemoteCallback.Stub() {
+                    mConnMgr.getAidl().registerCallback(new IRemoteCallback.Stub() {
                         @Override
                         public void onCallback(Bundle bundle) throws RemoteException {
                             bundle.setClassLoader(getClassLoader());

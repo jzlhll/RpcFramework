@@ -97,7 +97,6 @@ public final class GeneralBundle {
             bundleCreator.setErrorCode(errorCode);
             bundleCreator.setException(exception);
             bundleCreator.setHash(hash);
-            Bundle bundle = new Bundle();
             return bundleCreator;
         }
     }

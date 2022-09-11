@@ -9,17 +9,22 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import com.rpcframework.conn.IConnMgr;
 import com.rpcframework.log.ALog;
 
-public class ClientConnMgr implements IBinder.DeathRecipient{
+public class ClientConnMgr implements IConnMgr, IBinder.DeathRecipient{
     static final String TAG = "ClientConnMgr";
     //强绑定activity或者service
     private final Context mContext;
 
-    private final ClientConnMgrRetry mRetry;
+    private final ClientConnMgrRetryHandler mRetry;
     private ServiceConnectionImpl serviceConnection;
-    public IRemoteService getAidlService() {
-        return serviceConnection != null ? serviceConnection.remoteService : null;
+    public IRemoteService getAidl() {
+        ServiceConnectionImpl sc = serviceConnection;
+        if (sc != null && sc.remoteService != null && sc.mBinder.isBinderAlive()) {
+            return sc.remoteService;
+        }
+        return null;
     }
 
     private String mServicePackage, mServiceName;
@@ -42,7 +47,7 @@ public class ClientConnMgr implements IBinder.DeathRecipient{
 
     private ClientConnMgr(Context context, boolean inner) {
         mContext = context;
-        mRetry = new ClientConnMgrRetry(
+        mRetry = new ClientConnMgrRetryHandler(
             () -> { //bind
                 try {
                     ServiceConnectionImpl sc = new ServiceConnectionImpl();
