@@ -43,12 +43,12 @@ public class OrderHasCallbackImpl implements IOrderBis {
     }
 
     @Override
-    public boolean registerListener(ICallback callback) {
+    public boolean addListener(ICallback callback) {
         return callbackSet.add(callback);
     }
 
     @Override
-    public boolean unRegisterListener(ICallback callback) {
+    public boolean removeListener(ICallback callback) {
         return callbackSet.remove(callback);
     }
 }

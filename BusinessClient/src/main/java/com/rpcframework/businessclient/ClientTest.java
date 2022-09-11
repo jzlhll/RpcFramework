@@ -9,7 +9,7 @@ public class ClientTest {
 
     public void test() {
         IOrderBis order = ClientSDK.getProxyInProcess(IOrderBis.class, ClientSDK.TYPE_INNER_PROCESS_NOT_SAME_CLASS);
-        order.registerListener(new IOrderCallback() {
+        order.addListener(new IOrderCallback() {
             @Override
             public void callback(InInfo info, String aa) {
                 Log.d(TAG, "callback info: " + info.info + ", " + info.info2 + ", aa " + aa);

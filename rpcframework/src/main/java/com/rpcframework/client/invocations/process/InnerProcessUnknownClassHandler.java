@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.rpcframework.annotation.MappingSameClassAnnotation;
 import com.rpcframework.ICallback;
-import com.rpcframework.server.IHasCallbackBis;
+import com.rpcframework.server.IBusiness;
 import com.rpcframework.server.process.ClientCallbackHandler;
 import com.rpcframework.util.GsonConvertor;
 import com.rpcframework.util.ReflectUtil;
@@ -42,7 +42,7 @@ public final class InnerProcessUnknownClassHandler extends InnerProcessHandler {
             return false;
         }
 
-        if (!(svrInstance instanceof IHasCallbackBis)) {
+        if (!(svrInstance instanceof IBusiness)) {
             RpcLog.d("doIRegisterBisMethods svrInstance is not an IRegisterBis");
             return false;
         }
@@ -52,8 +52,8 @@ public final class InnerProcessUnknownClassHandler extends InnerProcessHandler {
             throw new RuntimeException("Error01 param of " + method.getDeclaringClass() + ", " + name);
         }
         //todo 改成泛型，减少一个注解
-        Class<?> paramType = ((IHasCallbackBis) svrInstance).getCallbackClass();
-        IHasCallbackBis svrInstanceBis = (IHasCallbackBis) svrInstance;
+        Class<?> paramType = ((IBusiness) svrInstance).getCallbackClass();
+        IBusiness svrInstanceBis = (IBusiness) svrInstance;
 
         //证明是一个回调接口
         //是回调接口类型，就不能如上直接转了，需要构建出服务端的callback并代理上客户端的代码。
@@ -69,7 +69,7 @@ public final class InnerProcessUnknownClassHandler extends InnerProcessHandler {
         ICallback o = (ICallback) Proxy.newProxyInstance(ICallback.class.getClassLoader(),
                 new Class[] {svrCallbackClass},
                 new ClientCallbackHandler(args[0]));
-        boolean r = svrInstanceBis.registerListener(o);
+        boolean r = svrInstanceBis.addListener(o);
         Log.d("allan", "r " + r);
         return true;
     }
