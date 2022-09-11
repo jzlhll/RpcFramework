@@ -1,7 +1,7 @@
 package com.rpcframework.util;
 
 import com.rpcframework.server.IBusiness.ICallback;
-import com.rpcframework.pack.MethodParcel;
+import com.rpcframework.pack.MethodSerial;
 import com.rpcframework.annotation.MappingSameClassAnnotation;
 
 import java.lang.reflect.Method;
@@ -34,16 +34,16 @@ public class ReflectUtil {
         return classForName(clientClassToSvrClassName(clazz));
     }
 
-    public static List<MethodParcel> classToMethodParcelList(Class<?> clazz) {
+    public static List<MethodSerial> classToMethodParcelList(Class<?> clazz) {
         if (!clazz.isAssignableFrom(ICallback.class)) {
             throw new RuntimeException(" pack up >" + clazz + "< is not assign from ICallback.class");
         }
 
         Method[] methods = clazz.getMethods();
-        List<MethodParcel> methodParcels = new ArrayList<>(methods.length);
+        List<MethodSerial> methodParcels = new ArrayList<>(methods.length);
         //todo 验证，应该没有Object的方法吧。
         for (Method method : methods) {
-            MethodParcel methodParcel = new MethodParcel();
+            MethodSerial methodParcel = new MethodSerial();
             methodParcel.setReturnType(method.getReturnType().getName());
             methodParcel.setMethodName(method.getName());
 
@@ -56,14 +56,14 @@ public class ReflectUtil {
         return methodParcels;
     }
 
-    public static HashMap<String, List<MethodParcel>> classToMethodParcelMap(Class<?> clazz) {
-        List<MethodParcel> methodParcels = classToMethodParcelList(clazz);
-        HashMap<String, List<MethodParcel>> map = new HashMap<>();
-        for (MethodParcel mp : methodParcels) {
+    public static HashMap<String, List<MethodSerial>> classToMethodParcelMap(Class<?> clazz) {
+        List<MethodSerial> methodParcels = classToMethodParcelList(clazz);
+        HashMap<String, List<MethodSerial>> map = new HashMap<>();
+        for (MethodSerial mp : methodParcels) {
             if (map.containsKey(mp.getMethodName())) {
                 map.get(mp.getMethodName()).add(mp);
             } else {
-                List<MethodParcel> list = new ArrayList<>(1);
+                List<MethodSerial> list = new ArrayList<>(1);
                 list.add(mp);
                 map.put(mp.getMethodName(), list);
             }

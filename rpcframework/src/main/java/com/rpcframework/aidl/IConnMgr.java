@@ -1,4 +1,4 @@
-package com.rpcframework.remote;
+package com.rpcframework.aidl;
 
 import com.rpcframework.sdk.IRemoteService;
 

@@ -1,4 +1,4 @@
-package com.rpcframework.server.process;
+package com.rpcframework.server;
 
 import com.rpcframework.client.BaseInvokeHandler;
 import com.rpcframework.util.GsonConvertor;

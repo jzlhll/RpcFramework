@@ -10,7 +10,7 @@ import java.io.Serializable;
  * 2. 同进程，不同接口业务类，在{@link InnerProcessUnknownClassHandler}中sendCall，
  *      就可以进行类型转换（虽然是通过将原Object变成jsonStr，再行转换而成）。
  */
-public final class ReturnParcel implements Serializable {
+public final class ReturnSerial implements Serializable {
     private static final long serialVersionUID = -22008413379294L;
 
     private String returnType; //返回值的类名。
@@ -19,13 +19,13 @@ public final class ReturnParcel implements Serializable {
     private String exception; //表示出错的结果。不出错没有。
     private int hash; //表示从发送端发送的这个值的的hash。
 
-    public ReturnParcel(){}
+    public ReturnSerial(){}
 
-    public ReturnParcel(Object result) {
+    public ReturnSerial(Object result) {
         this.result = result;
     }
 
-    public ReturnParcel(String exception, int errorCode) {
+    public ReturnSerial(String exception, int errorCode) {
         this.exception = exception;
         this.errorCode = errorCode;
     }
@@ -72,7 +72,7 @@ public final class ReturnParcel implements Serializable {
         this.returnType = returnType;
     }
 
-    public void copyFrom(ReturnParcel r) {
+    public void copyFrom(ReturnSerial r) {
         this.errorCode = r.errorCode;
         this.exception = r.exception;
         this.result = r.result;

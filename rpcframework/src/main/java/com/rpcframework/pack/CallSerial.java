@@ -8,11 +8,11 @@ import java.io.Serializable;
  * 一个 Call 对象表示客户端发起的一个远程调用,
  * 它包括调用的类名或接口名、方法名、方法参数类型、方法参数值和方法执行结果。
  */
-public class Call implements Serializable {
+public class CallSerial implements Serializable {
     private static final long serialVersionUID = -2200841337929164L;
 
-    public Call() {}
-    public Call(String className, String methodName, Class<?>[] paramTypes, Object[] params) {
+    public CallSerial() {}
+    public CallSerial(String className, String methodName, Class<?>[] paramTypes, Object[] params) {
         this.className = className;
         this.methodName = methodName;
         this.paramTypes = paramTypes;

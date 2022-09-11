@@ -1,11 +1,11 @@
 package com.rpcframework.client;
 
-import com.rpcframework.pack.Call;
-import com.rpcframework.pack.ReturnParcel;
+import com.rpcframework.pack.CallSerial;
+import com.rpcframework.pack.ReturnSerial;
 
 public interface IClientConnector {
     boolean isConnected();
     void connect();
-    ReturnParcel sendCall(Call call);
+    ReturnSerial sendCall(CallSerial call);
     void disconnect();
 }
