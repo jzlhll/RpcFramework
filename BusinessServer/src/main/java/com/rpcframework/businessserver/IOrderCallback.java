@@ -1,6 +1,6 @@
 package com.rpcframework.businessserver;
 
-import com.rpcframework.ICallback;
+import com.rpcframework.server.IBusiness.ICallback;
 
 public interface IOrderCallback extends ICallback {
     void callback(InInfo info, String aa);

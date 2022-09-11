@@ -1,6 +1,6 @@
 package com.rpcframework.util;
 
-import com.rpcframework.ICallback;
+import com.rpcframework.server.IBusiness.ICallback;
 import com.rpcframework.pack.MethodParcel;
 import com.rpcframework.annotation.MappingSameClassAnnotation;
 

@@ -3,7 +3,6 @@ package com.rpcframework.client.invocations.process;
 import android.util.Log;
 
 import com.rpcframework.annotation.MappingSameClassAnnotation;
-import com.rpcframework.ICallback;
 import com.rpcframework.server.IBusiness;
 import com.rpcframework.server.process.ClientCallbackHandler;
 import com.rpcframework.util.GsonConvertor;
@@ -66,7 +65,7 @@ public final class InnerProcessUnknownClassHandler extends InnerProcessHandler {
         //得到服务端接口类 todo 加速
         Class<?> svrCallbackClass = ReflectUtil.clientClassToSvrClass(paramType);
         //再创建代理
-        ICallback o = (ICallback) Proxy.newProxyInstance(ICallback.class.getClassLoader(),
+        IBusiness.ICallback o = (IBusiness.ICallback) Proxy.newProxyInstance(IBusiness.ICallback.class.getClassLoader(),
                 new Class[] {svrCallbackClass},
                 new ClientCallbackHandler(args[0]));
         boolean r = svrInstanceBis.addListener(o);

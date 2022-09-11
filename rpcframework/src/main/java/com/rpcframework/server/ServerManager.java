@@ -1,6 +1,6 @@
 package com.rpcframework.server;
 
-import com.rpcframework.ICallback;
+import com.rpcframework.server.IBusiness.ICallback;
 import com.rpcframework.util.ReflectUtil;
 
 import java.util.Collections;
