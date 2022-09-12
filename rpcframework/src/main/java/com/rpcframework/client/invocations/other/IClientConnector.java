@@ -1,9 +1,9 @@
-package com.rpcframework.client;
+package com.rpcframework.client.invocations.other;
 
 import com.rpcframework.pack.CallSerial;
 import com.rpcframework.pack.ReturnSerial;
 
-public interface IClientConnector {
+interface IClientConnector {
     boolean isConnected();
     void connect();
     ReturnSerial sendCall(CallSerial call);

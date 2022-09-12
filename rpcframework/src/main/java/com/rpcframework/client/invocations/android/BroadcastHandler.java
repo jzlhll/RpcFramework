@@ -1,16 +1,14 @@
-package com.rpcframework.client.invocations.other;
+package com.rpcframework.client.invocations.android;
 
 import com.rpcframework.client.BaseInvokeHandler;
+import com.rpcframework.exception.UnImplException;
 
 import java.lang.reflect.Method;
 
 public class BroadcastHandler extends BaseInvokeHandler {
 
-    public BroadcastHandler(Class<?> clientInterface) {
-    }
-
     @Override
     protected Object sendCall(Method method, Object[] args) {
-        return null;
+        throw new UnImplException();
     }
 }

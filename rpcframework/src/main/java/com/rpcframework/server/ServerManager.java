@@ -1,83 +1,79 @@
 package com.rpcframework.server;
 
-import com.rpcframework.server.IBusiness.ICallback;
 import com.rpcframework.util.ReflectUtil;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ServerManager {
     private final Map<Class<?>, Object> businessList =
             Collections.synchronizedMap(new HashMap<>(4));
 
-    private final Map<Class<? extends ICallback>, Set<ICallback>> hasCallbackBisList =
-            new ConcurrentHashMap<>(4);
+//    private final Map<Class<? extends ICallback>, Set<ICallback>> hasCallbackBisList =
+//            new ConcurrentHashMap<>(4);
 
-    public final void addListener(Object clazzOrStr, ICallback callback) {
-        Class<? extends ICallback> clazz = null;
-        if (clazzOrStr instanceof String) {
-            Class<?> cls = null;
-            try {
-                cls = Class.forName((String) clazzOrStr);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            if (cls != null && cls.isInterface() && cls.isAssignableFrom(ICallback.class)) {
-                clazz = (Class<? extends ICallback>) cls;
-            }
-        } else {
-            Class<?> cls = (Class<?>) clazzOrStr;
-            if (cls.isAssignableFrom(ICallback.class)) {
-                clazz = (Class<? extends ICallback>) cls;
-            }
-        }
-
-        if (clazz != null) {
-            Set<ICallback> callbacks = hasCallbackBisList.get(clazz);
-            if (callbacks == null) {
-                callbacks = new HashSet<>(1);
-                hasCallbackBisList.put(clazz, callbacks);
-            }
-
-            callbacks.add(callback);
-        }
-    }
-
-    public final void removeListener(Object clazzOrStr, ICallback callback) {
-        Class<? extends ICallback> clazz = null;
-        if (clazzOrStr instanceof String) {
-            Class<?> cls = null;
-            try {
-                cls = Class.forName((String) clazzOrStr);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            if (cls != null && cls.isInterface() && cls.isAssignableFrom(ICallback.class)) {
-                clazz = (Class<? extends ICallback>) cls;
-            }
-        } else {
-            Class<?> cls = (Class<?>) clazzOrStr;
-            if (cls.isAssignableFrom(ICallback.class)) {
-                clazz = (Class<? extends ICallback>) cls;
-            }
-        }
-
-        if (clazz != null) {
-            Set<ICallback> callbacks = hasCallbackBisList.get(clazz);
-            if (callbacks == null) {
-                return;
-            }
-
-            callbacks.remove(callback);
-            if (callbacks.size() == 0) {
-                hasCallbackBisList.remove(clazz);
-            }
-        }
-    }
+//    public final void addListener(Object clazzOrStr, ICallback callback) {
+//        Class<? extends ICallback> clazz = null;
+//        if (clazzOrStr instanceof String) {
+//            Class<?> cls = null;
+//            try {
+//                cls = Class.forName((String) clazzOrStr);
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//            if (cls != null && cls.isInterface() && cls.isAssignableFrom(ICallback.class)) {
+//                clazz = (Class<? extends ICallback>) cls;
+//            }
+//        } else {
+//            Class<?> cls = (Class<?>) clazzOrStr;
+//            if (cls.isAssignableFrom(ICallback.class)) {
+//                clazz = (Class<? extends ICallback>) cls;
+//            }
+//        }
+//
+//        if (clazz != null) {
+//            Set<ICallback> callbacks = hasCallbackBisList.get(clazz);
+//            if (callbacks == null) {
+//                callbacks = new HashSet<>(1);
+//                hasCallbackBisList.put(clazz, callbacks);
+//            }
+//
+//            callbacks.add(callback);
+//        }
+//    }
+//
+//    public final void removeListener(Object clazzOrStr, ICallback callback) {
+//        Class<? extends ICallback> clazz = null;
+//        if (clazzOrStr instanceof String) {
+//            Class<?> cls = null;
+//            try {
+//                cls = Class.forName((String) clazzOrStr);
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//            if (cls != null && cls.isInterface() && cls.isAssignableFrom(ICallback.class)) {
+//                clazz = (Class<? extends ICallback>) cls;
+//            }
+//        } else {
+//            Class<?> cls = (Class<?>) clazzOrStr;
+//            if (cls.isAssignableFrom(ICallback.class)) {
+//                clazz = (Class<? extends ICallback>) cls;
+//            }
+//        }
+//
+//        if (clazz != null) {
+//            Set<ICallback> callbacks = hasCallbackBisList.get(clazz);
+//            if (callbacks == null) {
+//                return;
+//            }
+//
+//            callbacks.remove(callback);
+//            if (callbacks.size() == 0) {
+//                hasCallbackBisList.remove(clazz);
+//            }
+//        }
+//    }
 
     public final void put(Class<?> clazz, Object instance) {
         businessList.put(clazz, instance);

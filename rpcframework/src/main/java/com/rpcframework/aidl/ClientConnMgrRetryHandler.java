@@ -6,12 +6,12 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
-import com.rpcframework.snip.IAction;
-import com.rpcframework.snip.IAction1;
+import com.rpcframework.defs.IAction;
+import com.rpcframework.defs.IAction1;
 import com.rpcframework.util.RpcLog;
 
 final class ClientConnMgrRetryHandler extends Handler {
-    private static final String TAG = ClientConnMgr.TAG + "Retry";
+    private static final String TAG = ConnMgr.TAG + "Retry";
 
     private final IAction mBind, mUnBind;
     private IAction1 mStopper, mTimeout;

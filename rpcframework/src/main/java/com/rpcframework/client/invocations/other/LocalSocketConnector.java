@@ -1,11 +1,10 @@
-package com.rpcframework.client.invocations.socket;
+package com.rpcframework.client.invocations.other;
 
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 
 import com.rpcframework.pack.CallSerial;
 import com.rpcframework.pack.ReturnSerial;
-import com.rpcframework.client.IClientConnector;
 import com.rpcframework.server.socket.LocalSocketSvrConnector;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * todo 实现非oneshot
  */
-public class LocalSocketConnector implements IClientConnector {
+class LocalSocketConnector implements IClientConnector {
     public static final boolean ONESHOT_MODE = true; //只干一次。不做循环。每次invoke都是一次重新的链接
     private LocalSocketClientThread thread;
 

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * 单个函数，模拟封装。
  */
-public final class MethodSerial implements Serializable{
+public class MethodSerial implements Serializable{
     private static final long serialVersionUID = -5466192765067344772L;
 
     /**

@@ -1,5 +1,9 @@
 package com.rpcframework;
 
+import android.content.Context;
+
+import com.rpcframework.client.ClientConnMgrs;
+import com.rpcframework.client.IClientMgr;
 import com.rpcframework.client.invocations.process.IProcessObjectSupply;
 
 import java.lang.reflect.InvocationHandler;
@@ -33,20 +37,17 @@ public class ClientSDK {
                 handler);
     }
 
-    //虽然传入的是IHasCallbackBis,并且服务端也基于这个实现。
-//    public static Object getProxyOutProcess(Class<? extends ICallback> interfaceClass,
-//                                            String svrBisName,
-//                                            String type) {
-//        InvocationHandler handler = null;
-//        if (TYPE_LOCAL_SOCKET.equals(type)) {
-//            handler = InvokeHandlerFactory.createOutProcess(type);
-//        }
-//
-//        assert handler != null;
-//        return Proxy.newProxyInstance(interfaceClass.getClassLoader(),
-//                new Class<?>[]{interfaceClass},
-//                handler);
-//    }
+    //clinetMgr请传入new IClientMgr[1];将会给你一个mgr。
+    //这个mgr是根据svrPkg，svrName进程唯一的。
+    public static <T> T getProxyAidl(Context context, Class<T> interfaceClass,
+                  String svrPkg, String serviceName, IClientMgr[] clientMgr) {
+        AidlBuilder<T> b = new AidlBuilder<>();
+        IClientMgr mgr = b.setSvrPkg(svrPkg).setSvrName(serviceName).createClientMgr(context);
+        clientMgr[0] = mgr;
+        return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(),
+                new Class<?>[]{interfaceClass},
+                InvokeHandlerFactory.createAidl(interfaceClass, mgr));
+    }
 
     /**
      * 同一个进程；并且业务接口类，服务端和客户端都可直接访问
@@ -64,4 +65,24 @@ public class ClientSDK {
     public static final String TYPE_LOCAL_SOCKET   = "localSocket";
     public static final String TYPE_AIDL           = "binder";
     public static final String TYPE_MESSENGER      = "messenger";
+
+    private static final class AidlBuilder<T> {
+        private String svrName, svrPkg;
+
+        public AidlBuilder<T> setSvrName(String svrName) {
+            this.svrName = svrName;
+            return this;
+        }
+
+        public AidlBuilder<T> setSvrPkg(String svrPkg) {
+            this.svrPkg = svrPkg;
+            return this;
+        }
+
+        public IClientMgr createClientMgr(Context context) {
+            return ClientConnMgrs.createConnection(context, svrPkg, svrName);
+        }
+    }
 }
+
+

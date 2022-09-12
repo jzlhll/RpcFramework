@@ -12,13 +12,25 @@ import android.os.RemoteException;
 import com.rpcframework.sdk.IRemoteService;
 import com.rpcframework.util.RpcLog;
 
-public class ClientConnMgr implements IConnMgr, IBinder.DeathRecipient{
+public class ConnMgr implements IConnMgr, IBinder.DeathRecipient{
     static final String TAG = "ClientConnMgr";
     //强绑定activity或者service
     private final Context mContext;
 
     private final ClientConnMgrRetryHandler mRetry;
     private ServiceConnectionImpl serviceConnection;
+
+    private IConnMgrServiceChanged mgrServiceChanged;
+
+    @Override
+    public void setMgrServiceChanged(IConnMgrServiceChanged mgrServiceChanged) {
+        this.mgrServiceChanged = mgrServiceChanged;
+    }
+
+    @Override
+    public void delMgrServiceChanged() {
+        mgrServiceChanged = null;
+    }
 
     public IRemoteService getSvr() {
         ServiceConnectionImpl sc = serviceConnection;
@@ -28,25 +40,30 @@ public class ClientConnMgr implements IConnMgr, IBinder.DeathRecipient{
         return null;
     }
 
-    private String mServicePackage, mServiceName;
-    public ClientConnMgr setServicePackage(String servicePackage) {
-        mServicePackage = servicePackage;
-        return this;
-    }
-    public ClientConnMgr setServiceName(String serviceName) {
-        mServiceName = serviceName;
-        return this;
+    @Override
+    public boolean isAlive() {
+        ServiceConnectionImpl sc = serviceConnection;
+        return sc != null && sc.remoteService != null && sc.mBinder.isBinderAlive();
     }
 
-    public ClientConnMgr(Activity activity) {
+    private String mServicePackage, mServiceName;
+    public void setServicePackage(String servicePackage) {
+        mServicePackage = servicePackage;
+    }
+
+    public void setServiceName(String serviceName) {
+        mServiceName = serviceName;
+    }
+
+    public ConnMgr(Activity activity) {
         this(activity, false);
     }
 
-    public ClientConnMgr(Service service) {
+    public ConnMgr(Service service) {
         this(service, false);
     }
 
-    private ClientConnMgr(Context context, boolean inner) {
+    public ConnMgr(Context context, boolean inner) {
         mContext = context;
         mRetry = new ClientConnMgrRetryHandler(
             () -> { //bind
@@ -74,6 +91,10 @@ public class ClientConnMgr implements IConnMgr, IBinder.DeathRecipient{
 
         mRetry.setStopper(bindState -> {
             RpcLog.d("REAL: after stopper bindState: " + bindState);
+            IConnMgrServiceChanged c = mgrServiceChanged;
+            if (c != null) {
+                c.onServiceChanged(bindState);
+            }
         });
 
         mRetry.setTimeout(bindState -> {
@@ -102,7 +123,7 @@ public class ClientConnMgr implements IConnMgr, IBinder.DeathRecipient{
             remoteService = IRemoteService.Stub.asInterface(service);
             mRetry.stopRetry(true);
             try {
-                service.linkToDeath(ClientConnMgr.this, 0);
+                service.linkToDeath(ConnMgr.this, 0);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

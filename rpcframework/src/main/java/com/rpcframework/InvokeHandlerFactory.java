@@ -2,21 +2,24 @@ package com.rpcframework;
 
 import static com.rpcframework.ClientSDK.*;
 
+import com.rpcframework.aidl.IConnMgr;
+import com.rpcframework.client.IClientMgr;
+import com.rpcframework.client.invocations.android.AidlUnknownClassHandler;
 import com.rpcframework.client.invocations.process.IProcessObjectSupply;
 import com.rpcframework.client.invocations.process.InnerProcessUnknownClassHandler;
 import com.rpcframework.client.invocations.process.InnerProcessHandler;
-import com.rpcframework.client.invocations.socket.LocalSocketHandler;
+import com.rpcframework.client.invocations.other.LocalSocketHandler;
 import com.rpcframework.client.invocations.other.SocketHandler;
 
 import java.lang.reflect.InvocationHandler;
 
 final class InvokeHandlerFactory {
-    public static InvocationHandler createOutProcess(String type) {
+    public static InvocationHandler createOutProcess(Class<?> clientInterface, String type) {
         switch (type) {
             case TYPE_SOCKET:
-                return new SocketHandler();
+                return new SocketHandler(clientInterface);
             case TYPE_LOCAL_SOCKET:
-                return new LocalSocketHandler();
+                return new LocalSocketHandler(clientInterface);
             //todo Broadcast:
             //todo Messenger
             //todo aidl
@@ -34,5 +37,9 @@ final class InvokeHandlerFactory {
         }
 
         return null;
+    }
+
+    public static InvocationHandler createAidl(Class<?> clientInterface, IClientMgr mgr) {
+        return new AidlUnknownClassHandler(clientInterface, mgr);
     }
 }

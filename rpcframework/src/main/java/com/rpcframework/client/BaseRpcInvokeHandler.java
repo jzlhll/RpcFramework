@@ -1,8 +1,5 @@
 package com.rpcframework.client;
 
-import android.os.Looper;
-
-import com.rpcframework.pack.CallSerial;
 import com.rpcframework.pack.ReturnSerial;
 import com.rpcframework.util.RpcLog;
 
@@ -11,16 +8,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class BaseRpcInvokeHandler implements InvocationHandler {
-    protected abstract IClientConnector getConnector();
+    protected final Class<?> clientInterface;
+
+    public BaseRpcInvokeHandler(Class<?> clientInterface) {
+        this.clientInterface = (clientInterface);
+    }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         //避免hashCode，toString，equals出错
         Class<?> methodDeclaringClass = method.getDeclaringClass();
-        if (!methodDeclaringClass.isInterface()) {
-            throw new RuntimeException("client call not a interface!");
-        }
-
         if (Object.class.equals(methodDeclaringClass)) {
             try {
                 return method.invoke(this, args);
@@ -29,32 +26,20 @@ public abstract class BaseRpcInvokeHandler implements InvocationHandler {
                 return null;
             }
         }
-        ReturnSerial response = sendCall(methodDeclaringClass, method, args);
+        ReturnSerial response = sendCall(method, args);
 
         if (response.getErrorCode() != 0) {
-            RpcLog.e("BaseRpcInvokeHandler invoke result error: " + response.getException());
+            RpcLog.e(response.getErrorCode() + ":BaseRpcInvokeHandler invoke result error: " + response.getException());
+            throw new RuntimeException("error when call server");
         }
         return response.getResult();
     }
 
-    private ReturnSerial sendCall(Class<?> methodDeclaringClass, Method method, Object[] args) {
-        if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
-            throw new RuntimeException("[BaseRpcInvokeHandler] cannot run in main thread!");
-        }
-        // 封装请求信息
-        CallSerial call = new CallSerial(methodDeclaringClass.getName(), method.getName(),
-                method.getParameterTypes(), args);
-        // 创建链接
-        IClientConnector connector = getConnector();
-        //todo 每次都是重新建立socket通信
-        if (!connector.isConnected()) {
-            connector.connect();
-        }
-        // 发送请求
-        ReturnSerial r = connector.sendCall(call);
-        // 获取封装远程方法调用结果的对象
-        connector.disconnect();
-
-        return r;
-    }
+    /**
+     * @return 返回值封装的是执行的结果。并非是远端的执行结果。
+     * 比如：aidl的执行过程，有同步结果我们需要把结果放在result。
+     *  如果服务暂时没有连接上，并且是非void的接口，将直接抛出异常；
+     *
+     */
+    protected abstract ReturnSerial sendCall(Method method, Object[] args);
 }

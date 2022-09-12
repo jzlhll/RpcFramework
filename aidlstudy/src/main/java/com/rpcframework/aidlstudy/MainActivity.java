@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == binding.bindServiceBtn.getId()) {
                 if (mConnMgr == null) {
                     ClientConnMgr mgr = new ClientConnMgr(MainActivity.this);
-                    mgr.setServicePackage("com.rpcframework.aidlstudy")
-                            .setServiceName("com.rpcframework.aidlstudy.MyRemoteService");
+                    mgr.setServicePackage("com.rpcframework.aidlstudy");
+                    mgr.setServiceName("com.rpcframework.aidlstudy.MyRemoteService");
 
                     mConnMgr = mgr;
                 }
